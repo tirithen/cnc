@@ -51,61 +51,71 @@ module frame_x(x=1100,y=700,thickness=5) {
 }
 
 module frame_y(y=700,z=300,width=200,thickness=5,thickness_thin=3,thickness_side_plate=12) {
-  translate([0,-thickness,20-thickness]) rotate([90,0,0]) sbr16uu();
-  translate([0,y+thickness,20-thickness]) rotate([-90,0,0]) sbr16uu();
-  translate([width-45,-thickness,20-thickness]) rotate([90,0,0]) sbr16uu();
-  translate([width-45,y+thickness,20-thickness]) rotate([-90,0,0]) sbr16uu();
+  translate([0,0,-10]) {
+    translate([0,-thickness,25]) rotate([90,0,0]) sbr16uu();
+    translate([0,y+thickness,25]) rotate([-90,0,0]) sbr16uu();
+    translate([width-45,-thickness,25]) rotate([90,0,0]) sbr16uu();
+    translate([width-45,y+thickness,25]) rotate([-90,0,0]) sbr16uu();
 
-  side_thickness = 45+40+thickness;
-  side_height=z+100;
+    side_thickness = 45+40+thickness;
+    side_height=z+100;
 
-  // Right side
-  color(aluminum_color) {
-    translate([40,-thickness_side_plate-side_thickness,-thickness*2]) cube([(width-80)/2,thickness_side_plate,side_height]);
-    translate([0,-side_thickness,-10]) {
-      difference() {
-        profile_o(width=40,height=60,thickness=thickness,length=width);
-        translate([0,0,60]) rotate([180,0,90]) angle_cut(width=40,angle=45,thickness=60);
-        translate([width,0,0]) rotate([0,0,90]) angle_cut(width=40,angle=45,thickness=60);
+    // Right side
+    color(aluminum_color) {
+      translate([40,-thickness_side_plate-side_thickness,0]) cube([(width-80)/2,thickness_side_plate,side_height]);
+      translate([0,-side_thickness,0]) {
+        difference() {
+          profile_o(width=40,height=60,thickness=thickness,length=width);
+          translate([0,0,60]) rotate([180,0,90]) angle_cut(width=40,angle=45,thickness=60);
+          translate([width,0,0]) rotate([0,0,90]) angle_cut(width=40,angle=45,thickness=60);
+        }
       }
     }
-  }
 
-  // Left side
-  color(aluminum_color) {
-    translate([40,y+side_thickness,-thickness*2]) cube([(width-80)/2,thickness_side_plate,side_height]);
-    translate([0,y+thickness+45,-10]) {
-      difference() {
-        profile_o(width=40,height=60,thickness=thickness,length=width);
-        translate([width,40,60]) rotate([0,180,90]) angle_cut(width=40,angle=45,thickness=60);
-        translate([0,40,0]) rotate([180,180,90]) angle_cut(width=40,angle=45,thickness=60);
+    // Left side
+    color(aluminum_color) {
+      translate([40,y+side_thickness,0]) cube([(width-80)/2,thickness_side_plate,side_height]);
+      translate([0,y+thickness+45,0]) {
+        difference() {
+          profile_o(width=40,height=60,thickness=thickness,length=width);
+          translate([width,40,60]) rotate([0,180,90]) angle_cut(width=40,angle=45,thickness=60);
+          translate([0,40,0]) rotate([180,180,90]) angle_cut(width=40,angle=45,thickness=60);
+        }
       }
     }
+
+    // Bottom side
+    color(steel_color) {
+      translate([width/2-width/4,-side_thickness,0]) rotate([180,0,90])
+      joint_t(width_a=40,length_a=width/2,width_b=40,length_b=180);
+
+      translate([width-width/4,y+side_thickness,0]) rotate([180,0,270])
+      joint_t(width_a=40,length_a=width/2,width_b=40,length_b=180);
+    }
+
+    color(aluminum_color) {
+      translate([width/2-40/2,-side_thickness,-2]) {
+        difference() {
+          rotate([180,0,90]) profile_u(width=40,height=20,length=y+(side_thickness)*2,thickness=thickness_thin);
+          translate([40,0,-20]) rotate([0,270,0]) angle_cut(width=20,angle=45,thickness=40);
+          translate([0,y+side_thickness*2,-20]) rotate([90,270,90]) angle_cut(width=20,angle=45,thickness=40);
+        }
+      }
+    }
+
+    // Linear bearings
+    translate([40,0,side_height-20]) rotate([90,0,90]) sbr16(length=y);
+    color(aluminum_color) translate([40,-side_thickness-thickness_side_plate,side_height-40]) rotate([0,0,90]) profile_l(width=40,height=40,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
+
+    translate([40,y,side_height-20-100]) rotate([-90,0,-90]) sbr16(length=y);
+    color(aluminum_color) translate([40,y+side_thickness+thickness_side_plate,side_height-100]) rotate([0,180,90]) profile_l(width=40,height=40,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
+
+    color(aluminum_color) translate([40,y+side_thickness+thickness_side_plate,side_height-40]) rotate([0,180,90]) profile_o(width=40,height=60,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
   }
-
-  // Bottom side
-  color(steel_color) {
-    translate([width/2-width/4,-side_thickness,-10]) rotate([180,0,90])
-    joint_t(width_a=40,length_a=width/2,width_b=40,length_b=180);
-
-    translate([width-width/4,y+side_thickness,-10]) rotate([180,0,270])
-    joint_t(width_a=40,length_a=width/2,width_b=40,length_b=180);
-  }
-
-  color(aluminum_color) {
-    translate([width/2-40/2,-side_thickness,-10-2])
-    rotate([180,0,90]) profile_u(width=40,height=20,length=y+(side_thickness)*2,thickness=thickness_thin);
-  }
-
-  translate([40,y+side_thickness+thickness_side_plate,side_height-10-20]) rotate([90,0,90]) sbr16(length=y);
-  color(aluminum_color) translate([40,0,side_height-10-20-20]) rotate([0,0,90]) profile_l(width=40,height=40,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
-  translate([40,y,side_height-10-20-100]) rotate([-90,0,-90]) sbr16(length=y);
-
-  color(aluminum_color) translate([40,y+side_thickness+thickness_side_plate,side_height-10-20-100+20]) rotate([0,180,90]) profile_l(width=40,height=40,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
 }
 
 frame_x(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=aluminum_thickness);
-mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness);
-translate([100,0,0]) frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
+//mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness);
+translate([50,0,0]) frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
 
-color([0.5,0.5,1,0.2]) translate([0,0,mount_sheet_thickness]) cube([cnc_rail_dimensions[0],cnc_rail_dimensions[1],cnc_rail_dimensions[2]]);
+//color([0.5,0.5,1,0.2]) translate([0,0,mount_sheet_thickness]) cube([cnc_rail_dimensions[0],cnc_rail_dimensions[1],cnc_rail_dimensions[2]]);
