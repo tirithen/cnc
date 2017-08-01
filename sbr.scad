@@ -29,7 +29,7 @@ module sbr(shaft_dimension=16,length=100,h=25,B=40,H=17.8,T=5,F=18.5,X=8,Y=11.7,
   translate([0,-B/2,0]) {
     color(aluminum_color)
     rotate([90,0,90])
-    linear_extrude(height=length)
+    linear_extrude(height=length,convexity=5)
     polygon([[0,0],[0,T],[B/2-F/2,T],[B/2-F/2,Y],[B/2-F/2+2,Y],[B/2-X/2,H],[B/2+X/2,H],[B/2+F/2-2,Y],[B/2+F/2,Y],[B/2+F/2,T],[B,T],[B,0],[B/2+S2d2/2+3,0],[B/2+S2d2/2+2,H-S2i*2.5],[B/2-S2d2/2-2,H-S2i*2.5],[B/2-S2d2/2-3,0]]);
 
     color(steel_color)
@@ -74,12 +74,12 @@ module sbruu(shaft_dimension=16,h=20,W=45,L=45,F=33,rh=25,h1=10,q=80,B=32,C=30,S
     color(aluminum_color) {
       difference() {
         rotate([90,0,90])
-        linear_extrude(height=L)
+        linear_extrude(height=L,convexity=5)
         polygon([[camfer*2,0],[camfer*2,camfer/2],[camfer,camfer*1.5],[camfer,F-T-camfer],[0,F-T],[0,F-camfer],[camfer,F],[W-B-camfer/2,F],[W-B,F-camfer/2],[W-(W-B),F-camfer/2],[W-(W-B-camfer/2),F],[W-camfer,F],[W,F-camfer],[W,F-T],[W-camfer,F-T-camfer],[W-camfer,camfer*1.5],[W-camfer*2,camfer/2],[W-camfer*2,0]]);
 
         translate([-2,W/2,F-h])
         rotate([90,180,90])
-        linear_extrude(height=L+4)
+        linear_extrude(height=L+4,convexity=5)
         polygon([[0,0],[sin(q/2)*W,cos(q/2)*W],[-sin(q/2)*W,cos(q/2)*W]]);
 
         translate([-1,W/2,F-h]) rotate([90,0,90]) cylinder(r=shaft_dimension/2,h=L+2,$fn=64);
