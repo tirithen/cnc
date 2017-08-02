@@ -114,8 +114,51 @@ module frame_y(y=700,z=300,width=200,thickness=5,thickness_thin=3,thickness_side
   }
 }
 
-frame_x(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=aluminum_thickness);
-//mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness);
-translate([50,0,0]) frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
+module frame_z(z=300,width=100,thickness=5) {
+  side_height=z+100;
+  y_offset=side_height-10+(z-40-60-40)/2;
 
-//color([0.5,0.5,1,0.2]) translate([0,0,mount_sheet_thickness]) cube([cnc_rail_dimensions[0],cnc_rail_dimensions[1],cnc_rail_dimensions[2]]);
+  translate([40,0,y_offset]) {
+    translate([0,0,-z/2+50]) rotate([90,0,90]) sbr16uu();
+    translate([0,width-45,-z/2+50]) rotate([90,0,90]) sbr16uu();
+    translate([0,0,-z/2-50]) rotate([90,0,90]) sbr16uu();
+    translate([0,width-45,-z/2-50]) rotate([90,0,90]) sbr16uu();
+
+    translate([45,20,0]) rotate([0,90,0]) sbr16(length=z);
+    translate([45,width-20,0]) rotate([0,90,0]) sbr16(length=z);
+
+    color(aluminum_color) {
+      translate([45-thickness,width,thickness]) rotate([90,180,90]) profile_l(width=60,height=40,length=width,thickness=thickness);
+
+      difference() {
+        translate([45+thickness,width-45,0]) rotate([0,90,90]) profile_l(width=40,height=45,length=z,thickness=thickness);
+        translate([-1,-1,-z/2+50-22.5]) cube([45+1,width+2,z]);
+        translate([-1,-1,-z*1.5-50+22.5]) cube([45+1,width+2,z]);
+      }
+
+      difference() {
+        translate([45+thickness,45,0]) rotate([0,90,180]) profile_l(width=45,height=40,length=z,thickness=thickness);
+        translate([-1,-1,-z/2+50-22.5]) cube([45+1,width+2,z]);
+        translate([-1,-1,-z*1.5-50+22.5]) cube([45+1,width+2,z]);
+      }
+
+      translate([45,0,-z])
+      rotate([0,0,90])
+      profile_l(width=40,height=40,length=width,thickness=thickness);
+    }
+  }
+}
+
+frame_x(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=aluminum_thickness);
+
+//mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness);
+
+translate([0,0,0]) {
+  frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
+
+  translate([0,350-75,0]) frame_z(z=cnc_rail_dimensions[2],width=150,thickness=5);
+}
+
+
+
+color([0.5,0.5,1,0.2]) translate([0,0,mount_sheet_thickness]) cube([cnc_rail_dimensions[0],cnc_rail_dimensions[1],cnc_rail_dimensions[2]]);
