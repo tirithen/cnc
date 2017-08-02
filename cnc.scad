@@ -6,6 +6,7 @@ include <profiles.scad>
 
 cnc_rail_dimensions=[1100,700,300];
 aluminum_thickness=5;
+//TODO: Fix x rail at 0 with aluminum_thickness = 3
 aluminum_thickness_thin=3;
 mount_sheet_thickness=50;
 
@@ -128,7 +129,7 @@ module frame_z(z=300,width=100,thickness=5) {
     translate([45,width-20,0]) rotate([0,90,0]) sbr16(length=z);
 
     color(aluminum_color) {
-      translate([45-thickness,width,thickness]) rotate([90,180,90]) profile_l(width=60,height=40,length=width,thickness=thickness);
+      translate([45-thickness,width,thickness]) rotate([90,180,90]) profile_l(width=60,height=60,length=width,thickness=thickness);
 
       difference() {
         translate([45+thickness,width-45,0]) rotate([0,90,90]) profile_l(width=40,height=45,length=z,thickness=thickness);
@@ -149,16 +150,41 @@ module frame_z(z=300,width=100,thickness=5) {
   }
 }
 
+module frame_tool(z=300,width=100,thickness=5) {
+  side_height=z+100;
+  y_offset=side_height-10+(z-40-60-40)/2;
+
+  translate([40,0,y_offset]) {
+    translate([45,20,0]) rotate([0,90,0]) sbr16uu();
+    translate([45,20,-45-20]) rotate([0,90,0]) sbr16uu();
+    translate([45,width-20,0]) rotate([0,90,0]) sbr16uu();
+    translate([45,width-20,-45-20]) rotate([0,90,0]) sbr16uu();
+
+    color(aluminum_color) {
+      translate([thickness+40+45+5,width-60,0]) rotate([0,90,90]) profile_l(width=40,height=60,length=z/2,thickness=thickness);
+      translate([thickness+40+45+5,60,0]) rotate([180,90,0]) profile_l(width=60,height=40,length=z/2,thickness=thickness);
+    }
+  }
+}
+
 frame_x(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=aluminum_thickness);
 
-//mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness);
+mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness);
 
 translate([0,0,0]) {
   frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
 
-  translate([0,350-75,0]) frame_z(z=cnc_rail_dimensions[2],width=150,thickness=5);
+  translate([0,0,0]) {
+    frame_z(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness);
+
+    translate([0,0,0]) { // -300+45*2+20
+      frame_tool(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness);
+    }
+  }
 }
 
 
 
-color([0.5,0.5,1,0.2]) translate([0,0,mount_sheet_thickness]) cube([cnc_rail_dimensions[0],cnc_rail_dimensions[1],cnc_rail_dimensions[2]]);
+//color([0.5,0.5,1,0.2]) translate([0,0,mount_sheet_thickness]) cube([cnc_rail_dimensions[0],cnc_rail_dimensions[1],cnc_rail_dimensions[2]]);
+
+color([0.5,0.5,1,0.5]) translate([40+45*2+aluminum_thickness,150/2,mount_sheet_thickness]) cube([cnc_rail_dimensions[0]-300,cnc_rail_dimensions[1]-150,cnc_rail_dimensions[2]-45*2+20]);
