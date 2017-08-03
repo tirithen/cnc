@@ -180,13 +180,13 @@ frame_x(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=aluminum_thi
 
 mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness,slide_spacing=100);
 
-translate([0,0,0]) { // Max (with 1100 mm rail) is 1100-300=800
+translate([800/2,0,0]) { // Max (with 1100 mm rail) is 1100-300=800
   frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
 
-  translate([0,0,0]) { // Max (with 700 mm rail) is 700-150=550
+  translate([0,550/2,0]) { // Max (with 700 mm rail) is 700-150=550
     frame_z(z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=150,thickness=aluminum_thickness);
 
-    translate([0,0,0]) { // Max (with 300 mm rail) is 300-45*2-20=190
+    translate([0,0,-190/2]) { // Max (with 300 mm rail) is 300-45*2-20=190
       frame_tool(z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=150,thickness=aluminum_thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-45-16,highest_tool_holder_diameter=80,highest_tool_holder_diameter=80,draw_laser=true);
       translate([210,75,y_side_height-108]) router(diameter=80,neck_diameter=50);
     }
