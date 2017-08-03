@@ -3,6 +3,7 @@ include <cuts.scad>
 include <joints.scad>
 include <sbr.scad>
 include <profiles.scad>
+include <tool.scad>
 
 cnc_rail_dimensions=[1100,700,300];
 aluminum_thickness=5;
@@ -150,9 +151,10 @@ module frame_z(z=300,width=100,thickness=5) {
   }
 }
 
-module frame_tool(z=300,width=100,thickness=5) {
+module frame_tool(z=300,width=100,thickness=5,highest_tool_holder_position=250) {
   side_height=z+100;
   y_offset=side_height-10+(z-40-60-40)/2;
+  slide_height=z/2;
 
   translate([40,0,y_offset]) {
     translate([45,20,0]) rotate([0,90,0]) sbr16uu();
@@ -161,8 +163,13 @@ module frame_tool(z=300,width=100,thickness=5) {
     translate([45,width-20,-45-20]) rotate([0,90,0]) sbr16uu();
 
     color(aluminum_color) {
-      translate([thickness+40+45+5,width-60,0]) rotate([0,90,90]) profile_l(width=40,height=60,length=z/2,thickness=thickness);
-      translate([thickness+40+45+5,60,0]) rotate([180,90,0]) profile_l(width=60,height=40,length=z/2,thickness=thickness);
+      translate([thickness+40+45+5,width-60,0]) rotate([0,90,90]) profile_l(width=40,height=60,length=slide_height,thickness=thickness);
+      translate([thickness+40+45+5,60,0]) rotate([180,90,0]) profile_l(width=60,height=40,length=slide_height,thickness=thickness);
+
+      translate([thickness+40+45+5,0,-slide_height]) {
+        tool_holder(tool_diameter=50,width=width);
+        translate([0,0,highest_tool_holder_position]) tool_holder(tool_diameter=100,width=width);
+      }
     }
   }
 }
@@ -178,7 +185,7 @@ translate([0,0,0]) {
     frame_z(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness);
 
     translate([0,0,0]) { // -300+45*2+20
-      frame_tool(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness);
+      frame_tool(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-12);
     }
   }
 }
