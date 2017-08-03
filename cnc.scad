@@ -6,10 +6,11 @@ include <profiles.scad>
 include <tool.scad>
 
 cnc_rail_dimensions=[1100,700,300];
+y_side_height=cnc_rail_dimensions[2]+68;
 aluminum_thickness=5;
 //TODO: Fix x rail at 0 with aluminum_thickness = 3
 aluminum_thickness_thin=3;
-mount_sheet_thickness=50;
+mount_sheet_thickness=40;
 
 aluminum_color=[0.913,0.921,0.925];
 steel_color=[0.560,0.570,0.580];
@@ -19,20 +20,22 @@ module mount_sheet(x=1100,y=700,thickness=50,slide_spacing=70,slide_shaft_width=
   slides = floor((y-slide_spacing)/slide_spacing);
   slides_offset = (y-slides*slide_spacing)/2-slide_spacing/2;
 
-  color(wood_color) {
-    difference() {
-      cube([x,y,thickness]);
-      for(i=[1:slides]) {
-        translate([-1,i*slide_spacing+slides_offset,thickness-slide_shaft_height]) {
-          translate([slide_spacing,-slide_shaft_width/2-slide_play,-1]) cube([x-slide_spacing*2,slide_shaft_width+slide_play*2,slide_shaft_height+2]);
-          translate([slide_spacing-(slide_head_width-slide_shaft_width)/2,-slide_head_width/2-slide_play,-slide_head_height]) cube([x-slide_spacing*2+(slide_head_width-slide_shaft_width),slide_head_width+slide_play*2,slide_head_height]);
+  translate([0,0,-thickness]) {
+    color(wood_color) {
+      difference() {
+        cube([x,y,thickness]);
+        for(i=[1:slides]) {
+          translate([-1,i*slide_spacing+slides_offset,thickness-slide_shaft_height]) {
+            translate([slide_spacing,-slide_shaft_width/2-slide_play,-1]) cube([x-slide_spacing*2,slide_shaft_width+slide_play*2,slide_shaft_height+2]);
+            translate([slide_spacing-(slide_head_width-slide_shaft_width)/2,-slide_head_width/2-slide_play,-slide_head_height]) cube([x-slide_spacing*2+(slide_head_width-slide_shaft_width),slide_head_width+slide_play*2,slide_head_height]);
 
-          hole_spacing=slide_spacing*3;
-          holes = floor((x-hole_spacing)/hole_spacing);
-          holes_offset = (x-holes*hole_spacing)/2-hole_spacing/2;
+            hole_spacing=slide_spacing*2.5;
+            holes = floor((x-hole_spacing)/hole_spacing);
+            holes_offset = (x-holes*hole_spacing)/2-hole_spacing/2;
 
-          for(j=[1:holes]) {
-            translate([j*hole_spacing+holes_offset,0,-1]) cylinder(r=(slide_head_width+slide_play*2)/2,h=slide_shaft_height+3);
+            for(j=[1:holes]) {
+              translate([j*hole_spacing+holes_offset,0,-1]) cylinder(r=(slide_head_width+slide_play*2)/2,h=slide_shaft_height+3);
+            }
           }
         }
       }
@@ -41,30 +44,31 @@ module mount_sheet(x=1100,y=700,thickness=50,slide_spacing=70,slide_shaft_width=
 }
 
 module frame_x(x=1100,y=700,thickness=5) {
-  translate([0,-thickness,20-thickness]) rotate([90,0,0]) sbr16(length=x);
-  translate([0,y+thickness,20-thickness]) rotate([-90,0,0]) sbr16(length=x);
+  translate([0,0,-40]) {
+    translate([0,-thickness,20-thickness]) rotate([90,0,0]) sbr16(length=x);
+    translate([0,y+thickness,20-thickness]) rotate([-90,0,0]) sbr16(length=x);
 
-  color(aluminum_color) {
-    translate([-60,-thickness,-thickness]) profile_l(width=60,height=40,thickness=thickness,length=x+60*2);
-    translate([-60,y+thickness,-thickness]) rotate([90,0,0]) profile_l(width=40,height=60,thickness=thickness,length=x+60*2);
-    rotate([0,0,90]) profile_o(width=60,height=40,length=y);
-    translate([x+60,0,0]) rotate([0,0,90]) profile_o(width=60,height=40,length=y);
+    color(aluminum_color) {
+      translate([-60,-thickness,-thickness]) profile_l(width=60,height=40,thickness=thickness,length=x+60*2);
+      translate([-60,y+thickness,-thickness]) rotate([90,0,0]) profile_l(width=40,height=60,thickness=thickness,length=x+60*2);
+      rotate([0,0,90]) profile_o(width=60,height=40,length=y);
+      translate([x+60,0,0]) rotate([0,0,90]) profile_o(width=60,height=40,length=y);
+    }
   }
 }
 
-module frame_y(y=700,z=300,width=200,thickness=5,thickness_thin=3,thickness_side_plate=12) {
-  translate([0,0,-10]) {
+module frame_y(y=700,z=300,y_side_height=420,width=200,thickness=5,thickness_thin=3,thickness_side_plate=12) {
+  translate([0,0,-50]) {
     translate([0,-thickness,25]) rotate([90,0,0]) sbr16uu();
     translate([0,y+thickness,25]) rotate([-90,0,0]) sbr16uu();
     translate([width-45,-thickness,25]) rotate([90,0,0]) sbr16uu();
     translate([width-45,y+thickness,25]) rotate([-90,0,0]) sbr16uu();
 
     side_thickness = 45+40+thickness;
-    side_height=z+100;
 
     // Right side
     color(aluminum_color) {
-      translate([40,-thickness_side_plate-side_thickness,0]) cube([(width-80)/2,thickness_side_plate,side_height]);
+      translate([40,-thickness_side_plate-side_thickness,0]) cube([(width-80)/2,thickness_side_plate,y_side_height]);
       translate([0,-side_thickness,0]) {
         difference() {
           profile_o(width=40,height=60,thickness=thickness,length=width);
@@ -76,7 +80,7 @@ module frame_y(y=700,z=300,width=200,thickness=5,thickness_thin=3,thickness_side
 
     // Left side
     color(aluminum_color) {
-      translate([40,y+side_thickness,0]) cube([(width-80)/2,thickness_side_plate,side_height]);
+      translate([40,y+side_thickness,0]) cube([(width-80)/2,thickness_side_plate,y_side_height]);
       translate([0,y+thickness+45,0]) {
         difference() {
           profile_o(width=40,height=60,thickness=thickness,length=width);
@@ -106,19 +110,18 @@ module frame_y(y=700,z=300,width=200,thickness=5,thickness_thin=3,thickness_side
     }
 
     // Linear bearings
-    translate([40,0,side_height-20]) rotate([90,0,90]) sbr16(length=y);
-    color(aluminum_color) translate([40,-side_thickness-thickness_side_plate,side_height-40]) rotate([0,0,90]) profile_l(width=40,height=40,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
+    translate([40,0,y_side_height-20]) rotate([90,0,90]) sbr16(length=y);
+    color(aluminum_color) translate([40,-side_thickness-thickness_side_plate,y_side_height-40]) rotate([0,0,90]) profile_l(width=40,height=40,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
 
-    translate([40,y,side_height-20-100]) rotate([-90,0,-90]) sbr16(length=y);
-    color(aluminum_color) translate([40,y+side_thickness+thickness_side_plate,side_height-100]) rotate([0,180,90]) profile_l(width=40,height=40,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
+    translate([40,y,y_side_height-20-100]) rotate([-90,0,-90]) sbr16(length=y);
+    color(aluminum_color) translate([40,y+side_thickness+thickness_side_plate,y_side_height-100]) rotate([0,180,90]) profile_l(width=40,height=40,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
 
-    color(aluminum_color) translate([40,y+side_thickness+thickness_side_plate,side_height-40]) rotate([0,180,90]) profile_o(width=40,height=60,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
+    color(aluminum_color) translate([40,y+side_thickness+thickness_side_plate,y_side_height-40]) rotate([0,180,90]) profile_o(width=40,height=60,length=y+side_thickness*2+thickness_side_plate*2,thickness=thickness);
   }
 }
 
-module frame_z(z=300,width=100,thickness=5) {
-  side_height=z+100;
-  y_offset=side_height-10+(z-40-60-40)/2;
+module frame_z(z=300,y_side_height=420,width=100,thickness=5) {
+  y_offset=y_side_height-10+(z-40-60-40)/2-40;
 
   translate([40,0,y_offset]) {
     translate([0,0,-z/2+50]) rotate([90,0,90]) sbr16uu();
@@ -151,9 +154,8 @@ module frame_z(z=300,width=100,thickness=5) {
   }
 }
 
-module frame_tool(z=300,width=100,thickness=5,highest_tool_holder_position=250,draw_laser=false) {
-  side_height=z+100;
-  y_offset=side_height-10+(z-40-60-40)/2;
+module frame_tool(z=300,y_side_height=420,width=100,thickness=5,lowest_tool_holder_diameter=50,highest_tool_holder_diameter=80,highest_tool_holder_position=250,draw_laser=false) {
+  y_offset=y_side_height-10+(z-40-60-40)/2-40;
   slide_height=z/2;
 
   translate([40,0,y_offset]) {
@@ -168,26 +170,27 @@ module frame_tool(z=300,width=100,thickness=5,highest_tool_holder_position=250,d
     }
 
     translate([thickness+40+45+5,0,-slide_height]) {
-      tool_holder_laser(tool_diameter=50,width=width,,beam_width_angle=70,laser_unit_angle=0,draw_laser=draw_laser);
-      translate([0,0,highest_tool_holder_position]) tool_holder(tool_diameter=100,width=width);
+      tool_holder_laser(tool_diameter=lowest_tool_holder_diameter,width=width,beam_length=400,beam_width_angle=30,laser_unit_angle=25,draw_laser=draw_laser);
+      translate([0,0,highest_tool_holder_position]) tool_holder(tool_diameter=highest_tool_holder_diameter,width=width);
     }
   }
 }
 
 frame_x(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=aluminum_thickness);
 
-mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness);
+mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness,slide_spacing=100);
 
 translate([0,0,0]) { // Max (with 1100 mm rail) is 1100-300=800
-  frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
+  frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
 
   translate([0,0,0]) { // Max (with 700 mm rail) is 700-150=550
-    frame_z(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness);
+    frame_z(z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=150,thickness=aluminum_thickness);
 
-    translate([0,0,-190]) { // Max (with 300 mm rail) is 300-45*2-20=190
-      frame_tool(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-45-16,draw_laser=false);
+    translate([0,0,0]) { // Max (with 300 mm rail) is 300-45*2-20=190
+      frame_tool(z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=150,thickness=aluminum_thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-45-16,highest_tool_holder_diameter=80,highest_tool_holder_diameter=80,draw_laser=true);
+      translate([210,75,y_side_height-108]) router(diameter=80,neck_diameter=50);
     }
   }
 }
 
-color([0.5,0.5,1,0.2]) translate([210,150/2,mount_sheet_thickness]) cube([cnc_rail_dimensions[0]-300,cnc_rail_dimensions[1]-150,cnc_rail_dimensions[2]-45*2+20]);
+color([0.5,0.5,1,0.2]) translate([210,150/2,0]) cube([cnc_rail_dimensions[0]-300,cnc_rail_dimensions[1]-150,cnc_rail_dimensions[2]-110]);

@@ -51,7 +51,7 @@ module tool_holder_laser(tool_diameter=50,width=100,height=12,thickness=12, gap=
     color(aluminum_color) {
       difference() {
         union() {
-          translate([-width/2,-width/2,0]) linear_extrude(height=height,convexity=5) polygon([[0,0],[width/4,0],[width/1.7,width/2-cylinder_outer_radius-thickness*1.5],[width/1.7,width-(width/2-cylinder_outer_radius-thickness*1.5)],[width/4,width],[0,width]]);
+          translate([-width/2,-width/2,0]) linear_extrude(height=height,convexity=5) polygon([[0,0],[width/4,0],[width/1.75,width/2-cylinder_outer_radius-thickness*2.2],[width/1.75,width-(width/2-cylinder_outer_radius-thickness*2.2)],[width/4,width],[0,width]]);
 
           cylinder(r=cylinder_outer_radius,h=height,$fn=128);
           translate([tool_diameter/2,-thickness,0]) cube([thickness*2,thickness*2,height]);
@@ -61,21 +61,37 @@ module tool_holder_laser(tool_diameter=50,width=100,height=12,thickness=12, gap=
           translate([0,-gap/2,-1]) cube([cylinder_outer_radius+thickness+1,gap,height+2]);
           translate([cylinder_outer_radius+thickness/2,thickness+1,thickness/2]) rotate([90,0,0]) cylinder(r=hole_diameter/2,h=thickness*2+2,$fn=16);
 
-          translate([0,-cylinder_outer_radius,-35+thickness-2]) rotate([laser_unit_angle,0,0])  cylinder(r=6,h=35,$fn=32);
-          translate([0,cylinder_outer_radius,-35+thickness-2]) rotate([-laser_unit_angle,0,0])  cylinder(r=6,h=35,$fn=32);
-          translate([-cylinder_outer_radius,0,-35+thickness-2]) rotate([0,-laser_unit_angle,0]) cylinder(r=6,h=35,$fn=32);
-
-          translate([0,-cylinder_outer_radius,-35+thickness-2]) rotate([laser_unit_angle,0,0])  cylinder(r=3,h=50,$fn=32);
-          translate([0,cylinder_outer_radius,-35+thickness-2]) rotate([-laser_unit_angle,0,0])  cylinder(r=3,h=50,$fn=32);
-          translate([-cylinder_outer_radius,0,-35+thickness-2]) rotate([0,-laser_unit_angle,0]) cylinder(r=3,h=50,$fn=32);
+          translate([0,-cylinder_outer_radius-thickness/2,-thickness/2]) rotate([laser_unit_angle,0,0]) cylinder(r=6,h=50,$fn=32);
+          translate([0,cylinder_outer_radius+thickness/2,-thickness/2]) rotate([-laser_unit_angle,0,0]) cylinder(r=6,h=50,$fn=32);
+          translate([-cylinder_outer_radius-thickness/2,0,-thickness/2]) rotate([0,-laser_unit_angle,0]) cylinder(r=6,h=50,$fn=32);
         }
       }
     }
 
     if (draw_laser) {
-      translate([0,-cylinder_outer_radius,-35+thickness-2]) rotate([laser_unit_angle,0,0]) tool_holder_laser_laser(beam_length=beam_length,beam_angle=90,beam_width_angle=beam_width_angle);
-      translate([0,cylinder_outer_radius,-35+thickness-2]) rotate([-laser_unit_angle,0,0]) tool_holder_laser_laser(beam_length=beam_length,beam_angle=90,beam_width_angle=beam_width_angle);
-      translate([-cylinder_outer_radius,0,-35+thickness-2]) rotate([0,-laser_unit_angle,0]) tool_holder_laser_laser(beam_length=beam_length,beam_angle=0,beam_width_angle=beam_width_angle);
+      translate([0,-cylinder_outer_radius-thickness/2,-thickness/2]) rotate([laser_unit_angle,0,0]) tool_holder_laser_laser(beam_length=beam_length,beam_angle=90,beam_width_angle=beam_width_angle);
+      translate([0,cylinder_outer_radius+thickness/2,-thickness/2]) rotate([-laser_unit_angle,0,0]) tool_holder_laser_laser(beam_length=beam_length,beam_angle=90,beam_width_angle=beam_width_angle);
+      translate([-cylinder_outer_radius-thickness/2,0,-thickness/2]) rotate([0,-laser_unit_angle,0]) tool_holder_laser_laser(beam_length=beam_length,beam_angle=0,beam_width_angle=beam_width_angle);
     }
   }
+}
+
+module bit() {
+  color(steel_color) {
+    difference() {
+      cylinder(r=5/2,h=50,$fn=16);
+      translate([0,0,-1]) cube([10,10,26]);
+      translate([-10,-10,-1]) cube([10,10,26]);
+    }
+  }
+}
+
+module router(diameter=80,height=200,neck_diameter=50,neck_height=20,bit_holder_height=20,bit_holder_neck_diameter=10,bit_holder_nut=12) {
+  color([0.3,0.3,0.3]) cylinder(r=diameter/2,h=height,$fn=64);
+  color(aluminum_color) translate([0,0,-neck_height]) cylinder(r=neck_diameter/2,h=neck_height,$fn=64);
+
+  color(steel_color) translate([0,0,-neck_height-bit_holder_height+10]) cylinder(r=bit_holder_neck_diameter/2,h=bit_holder_height-10,$fn=32);
+  color(steel_color) translate([0,0,-neck_height-bit_holder_height]) cylinder(r=bit_holder_nut/2,h=10,$fn=6);
+
+  translate([0,0,-neck_height-bit_holder_height-30]) bit();
 }
