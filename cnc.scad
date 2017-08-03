@@ -151,7 +151,7 @@ module frame_z(z=300,width=100,thickness=5) {
   }
 }
 
-module frame_tool(z=300,width=100,thickness=5,highest_tool_holder_position=250) {
+module frame_tool(z=300,width=100,thickness=5,highest_tool_holder_position=250,draw_laser=false) {
   side_height=z+100;
   y_offset=side_height-10+(z-40-60-40)/2;
   slide_height=z/2;
@@ -165,11 +165,11 @@ module frame_tool(z=300,width=100,thickness=5,highest_tool_holder_position=250) 
     color(aluminum_color) {
       translate([thickness+40+45+5,width-60,0]) rotate([0,90,90]) profile_l(width=40,height=60,length=slide_height,thickness=thickness);
       translate([thickness+40+45+5,60,0]) rotate([180,90,0]) profile_l(width=60,height=40,length=slide_height,thickness=thickness);
+    }
 
-      translate([thickness+40+45+5,0,-slide_height]) {
-        tool_holder(tool_diameter=50,width=width);
-        translate([0,0,highest_tool_holder_position]) tool_holder(tool_diameter=100,width=width);
-      }
+    translate([thickness+40+45+5,0,-slide_height]) {
+      tool_holder_laser(tool_diameter=50,width=width,,beam_width_angle=70,laser_unit_angle=0,draw_laser=draw_laser);
+      translate([0,0,highest_tool_holder_position]) tool_holder(tool_diameter=100,width=width);
     }
   }
 }
@@ -178,20 +178,16 @@ frame_x(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=aluminum_thi
 
 mount_sheet(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=mount_sheet_thickness);
 
-translate([0,0,0]) {
+translate([0,0,0]) { // Max (with 1100 mm rail) is 1100-300=800
   frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],width=300,thickness=aluminum_thickness,thickness_thin=aluminum_thickness_thin);
 
-  translate([0,0,0]) {
+  translate([0,0,0]) { // Max (with 700 mm rail) is 700-150=550
     frame_z(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness);
 
-    translate([0,0,0]) { // -300+45*2+20
-      frame_tool(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-12);
+    translate([0,0,-190]) { // Max (with 300 mm rail) is 300-45*2-20=190
+      frame_tool(z=cnc_rail_dimensions[2],width=150,thickness=aluminum_thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-45-16,draw_laser=false);
     }
   }
 }
 
-
-
-//color([0.5,0.5,1,0.2]) translate([0,0,mount_sheet_thickness]) cube([cnc_rail_dimensions[0],cnc_rail_dimensions[1],cnc_rail_dimensions[2]]);
-
-color([0.5,0.5,1,0.5]) translate([40+45*2+aluminum_thickness,150/2,mount_sheet_thickness]) cube([cnc_rail_dimensions[0]-300,cnc_rail_dimensions[1]-150,cnc_rail_dimensions[2]-45*2+20]);
+color([0.5,0.5,1,0.2]) translate([210,150/2,mount_sheet_thickness]) cube([cnc_rail_dimensions[0]-300,cnc_rail_dimensions[1]-150,cnc_rail_dimensions[2]-45*2+20]);
