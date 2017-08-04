@@ -202,17 +202,14 @@ translate([0,thickness+45+40+12,40+thickness]) {
     //color([0.5,0.5,1,0.2]) translate([mount_sheet_margin,mount_sheet_margin,0]) cube([cnc_rail_dimensions[0]-y_slide_width,cnc_rail_dimensions[1]-z_slide_width,cnc_rail_dimensions[2]-70]);
   }
 
-  translate([800,0,0]) { // Max (with 1100 mm rail) is 1100-300=800
-    translate([0,0,45]) frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=y_slide_width,thickness=thickness,mount_sheet_width=mount_sheet_width);
+  translate([100,0,0]) { // Max (with 1100 mm rail) is 1100-300=800
+    translate([0,0,45]) frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],y_side_height=y_side_height+thickness,width=y_slide_width,thickness=thickness,mount_sheet_width=mount_sheet_width);
 
-    translate([0,550,0]) { // Max (with 700 mm rail) is 700-150=550
-      frame_z(z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=z_slide_width,thickness=thickness);
+    translate([0,100,0]) { // Max (with 700 mm rail) is 700-150=550
+      frame_z(z=cnc_rail_dimensions[2],y_side_height=y_side_height+thickness,width=z_slide_width,thickness=thickness);
 
-      translate([0,0,-190]) { // Max (with 300 mm rail) is 300-45*2-20=190
-        frame_tool(z=cnc_rail_dimensions[2],y_side_height=y_side_height,width=z_slide_width,thickness=thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-45-16,highest_tool_holder_diameter=80,highest_tool_holder_diameter=80,draw_laser=true,draw_router=true);
-
-        translate([220,10,190+50]) cylinder(r=2.5,h=30);
-        translate([220,0,190+50]) cylinder(r=2.5,h=50);
+      translate([0,0,-0]) { // Max (with 300 mm rail) is 300-45*2-20=190
+        frame_tool(z=cnc_rail_dimensions[2],y_side_height=y_side_height+thickness,width=z_slide_width,thickness=thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-45-16,highest_tool_holder_diameter=80,highest_tool_holder_diameter=80,draw_laser=true,draw_router=true);
       }
     }
   }
