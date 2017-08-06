@@ -1,4 +1,5 @@
 // Measurements source https://d2t1xqejof9utc.cloudfront.net/screenshots/pics/634edaa2aafc69b87035858a4a9380ef/large.jpg
+// and https://www.hardware-cnc.nl/en/shop/end-support-bearings/12-16mm-ballscrew/bk12-end-support-bearings-detail
 // Measurements for tilted angle under shaft and underside groove are just estimates since the measurements tables are missing that information
 // TODO: Add nicer details to SBRxxUU parts
 // TODO: Add holes to rails
@@ -24,6 +25,7 @@
 
 aluminum_color=[0.913,0.921,0.925];
 steel_color=[0.560,0.570,0.580];
+dark_color=[0.3,0.3,0.3];
 
 module sbr(shaft_dimension=16,length=100,h=25,B=40,H=17.8,T=5,F=18.5,X=8,Y=11.7,C=30,S1=5.5,S2d1=5.5,S2d2=9.5,S2i=5.4) {
   translate([0,-B/2,0]) {
@@ -119,4 +121,104 @@ module sbr40uu() {
 
 module sbr50uu() {
   sbruu(shaft_dimension=50,h=53,W=120,L=120,F=92,rh=62,h1=23,q=50,B=94,C=80,S=10,L1=20,T=25);
+}
+
+module sbr16rail(length=1000) {
+  thread_length=length-11-39-15;
+
+  color(steel_color) union() {
+    cylinder(r=5,h=11);
+    translate([0,0,11]) cylinder(r=8,h=thread_length);
+    translate([0,0,11+thread_length]) cylinder(r=6,h=39);
+    translate([0,0,11+thread_length+39]) cylinder(r=5,h=15);
+  }
+}
+
+module sfu1605_3() {
+  color(steel_color) difference() {
+    union() {
+      intersection() {
+        cylinder(r=48/2,h=10,$fn=64);
+        translate([-20,-50,-1]) cube([40,100,12]);
+      }
+      translate([0,0,10]) cylinder(r=28/2,h=10,$fn=64);
+      translate([0,0,20]) cylinder(r=27.8/2,h=22,$fn=64);
+    }
+
+    translate([0,0,-1]) cylinder(r=8,h=44,$fn=64);
+
+    translate([0,19,-1]) cylinder(r=5.5/2,h=12,$fn=24);
+    translate([sin(45)*19,cos(45)*19,-1]) cylinder(r=5.5/2,h=12,$fn=24);
+    translate([sin(-45)*19,cos(-45)*19,-1]) cylinder(r=5.5/2,h=12,$fn=24);
+    translate([0,-19,-1]) cylinder(r=5.5/2,h=12,$fn=24);
+    translate([sin(45)*19,-cos(45)*19,-1]) cylinder(r=5.5/2,h=12,$fn=24);
+    translate([sin(-45)*19,-cos(-45)*19,-1]) cylinder(r=5.5/2,h=12,$fn=24);
+  }
+}
+
+module bearing10() {
+  color(steel_color) difference() {
+    cylinder(r=12,h=10,$fn=55);
+    translate([0,0,-1]) cylinder(r=5,h=12,$fn=55);
+  }
+}
+
+module bolt_hole_sinked(diameter=6.6,head_diameter=10.8,head_length=5,length=30) {
+  translate([0,0,-1]) union() {
+    translate([0,0,1]) cylinder(r=diameter/2,h=length,$fn=24);
+    translate([0,0,0]) cylinder(r=head_diameter/2,h=head_length+1,$fn=32);
+  }
+}
+
+// TODO: figure out why screw holes overlap, maybe that should be the case?
+module bk12() {
+  color(dark_color) translate([0,0,-34]) difference() {
+    union() {
+      translate([-25,-30,4]) cube([32.5,60,25]);
+      translate([-17,-17,4]) cube([34,34,30]);
+    }
+
+    translate([0,0,-1]) cylinder(r=8,h=36,$fn=55);
+    translate([0,0,4+5]) cylinder(r=12,h=31,$fn=55);
+
+    translate([0,23,-1]) cylinder(r=5.5/2,h=100,$fn=24);
+    translate([0,-23,-1]) cylinder(r=5.5/2,h=100,$fn=24);
+    translate([-18,23,-1]) cylinder(r=5.5/2,h=100,$fn=24);
+    translate([-18,-23,-1]) cylinder(r=5.5/2,h=100,$fn=24);
+
+    translate([7,23,4+6]) rotate([0,-90,0]) bolt_hole_sinked(length=32.5);
+    translate([7,-23,4+6]) rotate([0,-90,0]) bolt_hole_sinked(length=32.5);
+    translate([7,23,4+6+13]) rotate([0,-90,0]) bolt_hole_sinked(length=32.5);
+    translate([7,-23,4+6+13]) rotate([0,-90,0]) bolt_hole_sinked(length=32.5);
+  }
+
+  color(dark_color) translate([0,-17,-34]) difference() {
+    rotate([0,0,45]) cube([24,24,4]);
+    translate([0,17,-1]) cylinder(r=8,h=6,$fn=55);
+  }
+
+  translate([0,0,-25]) bearing10();
+  translate([0,0,-15]) bearing10();
+}
+
+module bf12() {
+  color(dark_color) translate([0,0,-20]) difference() {
+    union() {
+      translate([-25,-30,0]) cube([32.5,60,20]);
+      translate([5+2.5,-17,0]) cube([43-32.5,34,20]);
+    }
+
+    translate([0,0,-1]) cylinder(r=5,h=22,$fn=55);
+    translate([0,0,-1]) cylinder(r=12,h=22,$fn=55);
+
+    translate([0,23,-1]) cylinder(r=5.5/2,h=100,$fn=24);
+    translate([0,-23,-1]) cylinder(r=5.5/2,h=100,$fn=24);
+    translate([-18,23,-1]) cylinder(r=5.5/2,h=100,$fn=24);
+    translate([-18,-23,-1]) cylinder(r=5.5/2,h=100,$fn=24);
+
+    translate([7,23,4+6]) rotate([0,-90,0]) bolt_hole_sinked(length=32.5);
+    translate([7,-23,4+6]) rotate([0,-90,0]) bolt_hole_sinked(length=32.5);
+  }
+
+  translate([0,0,-10]) bearing10();
 }
