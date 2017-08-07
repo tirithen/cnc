@@ -55,11 +55,9 @@ module nema23(length=78,width=56.4,axis_diameter=6.35,axis_length=20.6,mount_hol
 }
 
 module axis_coupling(bore_diameter1=6.35,bore_diameter2=10,outer_diameter=25,length=34) {
-  difference() {
+  color(steel_color) difference() {
     cylinder(r=outer_diameter/2,h=length,$fn=32);
-    translate([0,0,-1]) cylinder(r=bore_diameter1/2,h=length/3+1,$fn=32);
-    translate([0,0,length-length/3+1]) cylinder(r=bore_diameter2/2,h=length/3+1,$fn=32);
+    translate([0,0,-1]) cylinder(r=bore_diameter1/2,h=10+1,$fn=32);
+    translate([0,0,length-10+1]) cylinder(r=bore_diameter2/2,h=10+1,$fn=32);
   }
 }
-
-nema23();

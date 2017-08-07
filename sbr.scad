@@ -23,6 +23,8 @@
 * translate([10,600,0]) sbr50uu();
 */
 
+include <stepper.scad>
+
 aluminum_color=[0.913,0.921,0.925];
 steel_color=[0.560,0.570,0.580];
 dark_color=[0.3,0.3,0.3];
@@ -126,11 +128,11 @@ module sbr50uu() {
 module sbr16rail(length=1000) {
   thread_length=length-11-39-15;
 
-  color(steel_color) union() {
-    cylinder(r=5,h=11);
-    translate([0,0,11]) cylinder(r=8,h=thread_length);
-    translate([0,0,11+thread_length]) cylinder(r=6,h=39);
-    translate([0,0,11+thread_length+39]) cylinder(r=5,h=15);
+  color(steel_color) translate([0,0,length]) rotate([180,0,0]) union() {
+    cylinder(r=5,h=11,$fn=32);
+    translate([0,0,11]) cylinder(r=8,h=thread_length,$fn=32);
+    translate([0,0,11+thread_length]) cylinder(r=6,h=39,$fn=32);
+    translate([0,0,11+thread_length+39]) cylinder(r=5,h=15,$fn=32);
   }
 }
 
@@ -202,7 +204,7 @@ module bk12() {
 }
 
 module bf12() {
-  color(dark_color) translate([0,0,-20]) difference() {
+  color(dark_color) translate([0,0,0]) rotate([180,0,0]) difference() {
     union() {
       translate([-25,-30,0]) cube([32.5,60,20]);
       translate([5+2.5,-17,0]) cube([43-32.5,34,20]);
@@ -221,4 +223,12 @@ module bf12() {
   }
 
   translate([0,0,-10]) bearing10();
+}
+
+module sbr16rail_with_mounts_and_motor(length=1000) {
+  nema23();
+  translate([0,0,9]) axis_coupling();
+  translate([0,0,33]) sbr16rail(length=length);
+  translate([0,0,90]) bk12();
+  translate([0,0,length+33-1]) bf12();
 }

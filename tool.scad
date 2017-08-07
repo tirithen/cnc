@@ -1,15 +1,15 @@
 aluminum_color=[0.913,0.921,0.925];
 steel_color=[0.560,0.570,0.580];
 
-module tool_holder(tool_diameter=50,width=100,height=12,thickness=12, gap=5, hole_diameter=5) {
+module tool_holder(tool_diameter=50,width=100,tool_center_distance=45,height=12,thickness=12,gap=5,hole_diameter=5) {
   cylinder_outer_radius=tool_diameter/2+thickness;
 
   color(aluminum_color) {
-    translate([width/2,width/2,height/2-height/2]) {
+    translate([tool_center_distance,width/2,height/2-height/2]) {
       difference() {
         union() {
-          translate([-width/2,-width/2,0]) linear_extrude(height=height,convexity=5)
-          polygon([[0,0],[width/4,0],[width/2,width/2-cylinder_outer_radius],[width/2,width-(width/2-cylinder_outer_radius)],[width/4,width],[0,width]]);
+          translate([-tool_center_distance,-width/2,0]) linear_extrude(height=height,convexity=5)
+          polygon([[0,0],[tool_center_distance/3,0],[tool_center_distance,width/2-cylinder_outer_radius],[tool_center_distance,width-(width/2-cylinder_outer_radius)],[tool_center_distance/3,width],[0,width]]);
 
           cylinder(r=cylinder_outer_radius,h=height,$fn=128);
           translate([tool_diameter/2,-thickness,0]) cube([thickness*2,thickness*2,height]);
@@ -44,14 +44,14 @@ module tool_holder_laser_laser(beam_length=200,beam_angle=0,beam_width_angle=30,
   }
 }
 
-module tool_holder_laser(tool_diameter=50,width=100,height=12,thickness=12, gap=5, hole_diameter=5,beam_length=300,beam_angle=0,beam_width_angle=30,laser_unit_angle=15,draw_laser=false) {
+module tool_holder_laser(tool_diameter=50,width=100,tool_center_distance=45,height=12,thickness=12, gap=5, hole_diameter=5,beam_length=300,beam_angle=0,beam_width_angle=30,laser_unit_angle=15,draw_laser=false) {
   cylinder_outer_radius=tool_diameter/2+thickness;
 
-  translate([width/2,width/2,height/2-height/2]) {
+  translate([tool_center_distance,width/2,height/2-height/2]) {
     color(aluminum_color) {
       difference() {
         union() {
-          translate([-width/2,-width/2,0]) linear_extrude(height=height,convexity=5) polygon([[0,0],[width/4,0],[width/1.75,width/2-cylinder_outer_radius-thickness*2.2],[width/1.75,width-(width/2-cylinder_outer_radius-thickness*2.2)],[width/4,width],[0,width]]);
+          translate([-tool_center_distance,-width/2,0]) linear_extrude(height=height,convexity=5) polygon([[0,0],[tool_center_distance/3,0],[tool_center_distance+12,width/2-cylinder_outer_radius-thickness*2.2],[tool_center_distance+12,width-(width/2-cylinder_outer_radius-thickness*2.2)],[tool_center_distance/3,width],[0,width]]);
 
           cylinder(r=cylinder_outer_radius,h=height,$fn=128);
           translate([tool_diameter/2,-thickness,0]) cube([thickness*2,thickness*2,height]);
