@@ -19,7 +19,7 @@ mount_sheet_thickness=40;
 mount_sheet_border_thickness=mount_sheet_thickness+8;
 mount_sheet_slide_spacing=70;
 mount_sheet_slide_play=0;
-thickness=5;
+thickness=4;
 //TODO: Fix x rail at 0 with thickness = 3
 
 aluminum_color=[0.913,0.921,0.925];
