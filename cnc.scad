@@ -66,25 +66,30 @@ module mount_sheet(length=1100,width=700,thickness=40,border_thickness=45,border
 }
 
 module frame_x(x=1100,y=700,thickness=5,mount_sheet_width=700,mount_sheet_thickness=40,mount_sheet_offset_x=125) {
-  translate([0,-thickness,20]) rotate([90,0,0]) sbr16(length=x);
-  translate([0,mount_sheet_width+thickness,20]) rotate([-90,0,0]) sbr16(length=x);
+  rail_offset = 32 + 60 * 2;
+  frame_length = x + rail_offset;
+
+  translate([rail_offset,-thickness,20]) rotate([90,0,0]) sbr16(length=x);
+  translate([rail_offset,mount_sheet_width+thickness,20]) rotate([-90,0,0]) sbr16(length=x);
 
   color(aluminum_color) {
-    translate([0,-thickness,0]) profile_l(width=60,height=40,thickness=thickness,length=x);
-    translate([0,mount_sheet_width+thickness,0]) rotate([90,0,0]) profile_l(width=40,height=60,thickness=thickness,length=x);
-    translate([60,0,thickness]) rotate([0,0,90]) profile_o(width=60,height=40,length=mount_sheet_width,thickness=thickness);
-    translate([mount_sheet_offset_x+60,0,thickness]) rotate([0,0,90]) profile_o(width=60,height=40,length=mount_sheet_width,thickness=thickness);
-    translate([x,0,thickness]) rotate([0,0,90]) profile_o(width=60,height=40,length=mount_sheet_width,thickness=thickness);
+    translate([0,-thickness,0]) profile_l(width=60,height=40,thickness=thickness,length=frame_length);
+    translate([0,mount_sheet_width+thickness,0]) rotate([90,0,0]) profile_l(width=40,height=60,thickness=thickness,length=frame_length);
 
+    translate([60,0,thickness]) rotate([0,0,90]) profile_o(width=60,height=40,length=mount_sheet_width,thickness=thickness);
+    translate([60*2,0,thickness]) rotate([0,0,90]) profile_o(width=60,height=40,length=mount_sheet_width,thickness=thickness);
+    translate([rail_offset + mount_sheet_offset_x,0,thickness]) rotate([0,0,90]) profile_o(width=60,height=40,length=mount_sheet_width,thickness=thickness);
+    translate([frame_length-60,0,thickness]) rotate([0,0,90]) profile_o(width=60,height=40,length=mount_sheet_width,thickness=thickness);
+    translate([frame_length,0,thickness]) rotate([0,0,90]) profile_o(width=60,height=40,length=mount_sheet_width,thickness=thickness);
   }
 
   translate([0,-thickness,-40]) foot(width=60,height=40,length=60,thickness=thickness);
   translate([0,mount_sheet_width+thickness-60,-40]) foot(width=60,height=40,length=60,thickness=thickness);
-  translate([x-65,-thickness,-40]) foot(width=60,height=40,length=65,thickness=thickness);
-  translate([x-65,mount_sheet_width+thickness-60,-40]) foot(width=60,height=40,length=65,thickness=thickness);
+  translate([x+rail_offset-65,-thickness,-40]) foot(width=60,height=40,length=65,thickness=thickness);
+  translate([x+rail_offset-65,mount_sheet_width+thickness-60,-40]) foot(width=60,height=40,length=65,thickness=thickness);
 
   // Motor and screw
-  translate([-60-7-20,mount_sheet_width/2,-20]) rotate([0,90,0]) sbr16rail_with_mounts_and_motor(length=x+50);
+  translate([1.4,mount_sheet_width/2,-20]) rotate([0,90,0]) sbr16rail_with_mounts_and_motor(length=x+50);
 }
 
 module frame_y(y=700,z=300,y_side_height=420,width=200,thickness=5,thickness_side_plate=12,mount_sheet_width=750) {
@@ -230,10 +235,10 @@ module frame_tool(z=300,y_side_height=420,width=100,thickness=5,tool_holder_thic
   }
 }
 
-translate([166.6,thickness+45+40+12,40+thickness]) {
+translate([78,thickness+45+40+12,40+thickness]) {
   frame_x(x=cnc_rail_dimensions[0],y=cnc_rail_dimensions[1],thickness=thickness,mount_sheet_width=mount_sheet_width,mount_sheet_offset_x=mount_sheet_offset_x);
 
-  translate([60+mount_sheet_offset_x,0,thickness]) {
+  translate([60*2+32+mount_sheet_offset_x,0,thickness]) {
     mount_sheet(length=mount_sheet_length,width=mount_sheet_width,thickness=mount_sheet_thickness,border_thickness=mount_sheet_border_thickness,border_margin=mount_sheet_margin,border_margin_last=mount_sheet_margin_last,slide_spacing=mount_sheet_slide_spacing);
 
     // Maximum cutting area
@@ -241,9 +246,9 @@ translate([166.6,thickness+45+40+12,40+thickness]) {
   }
 
   translate([0,0,0]) { // Max (with 1100 mm rail) is 1100-300=800
-    translate([0,0,45]) frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],y_side_height=y_side_height+thickness,width=y_slide_width,thickness=thickness,mount_sheet_width=mount_sheet_width);
+    translate([60*2+32,0,45]) frame_y(y=cnc_rail_dimensions[1],z=cnc_rail_dimensions[2],y_side_height=y_side_height+thickness,width=y_slide_width,thickness=thickness,mount_sheet_width=mount_sheet_width);
 
-    translate([0,550/2,0]) { // Max (with 700 mm rail) is 700-150=550
+    translate([60*2+32,550/2,0]) { // Max (with 700 mm rail) is 700-150=550
       frame_z(z=cnc_rail_dimensions[2],y_side_height=y_side_height+thickness,width=z_slide_width,thickness=thickness);
 
       translate([0,0,-190]) { // Max (with 300 mm rail) is 300-45*2-20=190
