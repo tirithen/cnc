@@ -24,7 +24,6 @@ module profile_o(width=10,height=10,thickness=1,length=20) {
   polygon(points=[[0,0],[width,0],[width,height],[0,height],[thickness,thickness],[width-thickness,thickness],[width-thickness,height-thickness],[thickness,height-thickness]],paths=[[0,1,2,3],[4,5,6,7]]);
 }
 
-
 module profile_flat(width=10,length=10,thickness=1) {
   cube([length,width,thickness]);
 }

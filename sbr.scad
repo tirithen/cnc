@@ -125,7 +125,7 @@ module sbr50uu() {
   sbruu(shaft_dimension=50,h=53,W=120,L=120,F=92,rh=62,h1=23,q=50,B=94,C=80,S=10,L1=20,T=25);
 }
 
-module sbr16rail(length=1000) {
+module sbr16axis(length=1000) {
   thread_length=length-11-39-15;
 
   color(steel_color) translate([0,0,length]) rotate([180,0,0]) union() {
@@ -225,10 +225,57 @@ module bf12() {
   translate([0,0,-10]) bearing10();
 }
 
-module sbr16rail_with_mounts_and_motor(length=1000) {
+module axis_nut(with_holes=true) {
+  difference() {
+    union() {
+      translate([0,0,10]) cylinder(r=28/2,h=32,$fn=24);
+      intersection() {
+        cylinder(r=48/2,h=10,$fn=32);
+        translate([-39/2,-48/2,-1]) cube([39,48,12]);
+      }
+    }
+
+    if (with_holes == true) {
+      translate([0,0,-1]) cylinder(r=16/2,h=44,$fn=18);
+      for(i=[-1:1]) {
+        translate([sin(i*45)*19,cos(i*45)*19,-1]) cylinder(r=6/2,h=12,$fn=14);
+      }
+      for(i=[3:5]) {
+        translate([sin(i*45)*19,cos(i*45)*19,-1]) cylinder(r=6/2,h=12,$fn=14);
+      }
+    }
+  }
+}
+
+// 16 mm axis nut mount
+module dsg16h(with_holes=true) {
+  difference() {
+    translate([-20,-26,0]) intersection() {
+      cube([39.5,52,40]);
+      translate([-16.5,-45,-1]) rotate([0,0,45]) cube([100,100,42]);
+    }
+
+    if (with_holes == true) {
+      translate([0,0,-1]) cylinder(r=28/2,h=44,$fn=24);
+      for(i=[-1:1]) {
+        translate([sin(i*45)*19,cos(i*45)*19,-1]) cylinder(r=6/2,h=17,$fn=14);
+      }
+      for(i=[3:5]) {
+        translate([sin(i*45)*19,cos(i*45)*19,-1]) cylinder(r=6/2,h=17,$fn=14);
+      }
+
+      translate([-21,-20,8]) rotate([0,90,0]) cylinder(r=6/2,h=17,$fn=14);
+      translate([-21,-20,32]) rotate([0,90,0]) cylinder(r=6/2,h=17,$fn=14);
+      translate([-21,20,8]) rotate([0,90,0]) cylinder(r=6/2,h=17,$fn=14);
+      translate([-21,20,32]) rotate([0,90,0]) cylinder(r=6/2,h=17,$fn=14);
+    }
+  }
+}
+
+module sbr16axis_with_mounts_and_motor(length=1000) {
   nema23();
   translate([0,0,9]) axis_coupling();
-  translate([0,0,33]) sbr16rail(length=length);
+  translate([0,0,33]) sbr16axis(length=length);
   translate([0,0,90]) bk12();
   translate([0,0,length+33-1]) bf12();
 }
