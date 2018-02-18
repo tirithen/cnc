@@ -89,7 +89,7 @@ module frame_x(x=1100,y=700,thickness=5,mount_sheet_width=700,mount_sheet_thickn
   translate([x+rail_offset-65,mount_sheet_width+thickness-60,-40]) foot(width=60,height=40,length=65,thickness=thickness);
 
   // Motor and screw
-  translate([1.4,mount_sheet_width/2,-20]) rotate([0,90,0]) sbr16rail_with_mounts_and_motor(length=x+50);
+  translate([1.4,mount_sheet_width/2,-20]) rotate([0,90,0]) sbr16axis_with_mounts_and_motor(length=x+50);
 }
 
 module frame_y(y=700,z=300,y_side_height=420,width=200,thickness=5,thickness_side_plate=12,mount_sheet_width=750) {
@@ -155,8 +155,8 @@ module frame_y(y=700,z=300,y_side_height=420,width=200,thickness=5,thickness_sid
     color(aluminum_color) translate([40,slide_width-side_thickness,y_side_height-40]) rotate([0,180,90]) profile_o(width=40,height=60,length=slide_width,thickness=thickness);
 
     // Motor and screw
-//    translate([25+40,-133.5+10,y_side_height-(40*2+60)/2]) rotate([90,0,0]) sbr16rail_with_mounts_and_motor(length=y+50);
-    translate([25+40,y+23.5,y_side_height-(40*2+60)/2]) rotate([90,0,0]) sbr16rail_with_mounts_and_motor(length=y+50);
+//    translate([25+40,-133.5+10,y_side_height-(40*2+60)/2]) rotate([90,0,0]) sbr16axis_with_mounts_and_motor(length=y+50);
+    translate([25+40,y+23.5,y_side_height-(40*2+60)/2]) rotate([90,0,0]) sbr16axis_with_mounts_and_motor(length=y+50);
   }
 }
 
@@ -197,7 +197,7 @@ module frame_z(z=300,y_side_height=420,width=100,thickness=5) {
     }
 
     // Motor and screw
-    translate([25+45+thickness,width/2,y_side_height-thickness-z-50+40+2]) rotate([0,180,180]) sbr16rail_with_mounts_and_motor(length=z+50);
+    translate([25+45+thickness,width/2,y_side_height-thickness-z-50+40+2]) rotate([0,180,180]) sbr16axis_with_mounts_and_motor(length=z+50);
   }
 }
 
@@ -251,7 +251,7 @@ translate([78,thickness+45+40+12,40+thickness]) {
     translate([60*2+32,550/2,0]) { // Max (with 700 mm rail) is 700-150=550
       frame_z(z=cnc_rail_dimensions[2],y_side_height=y_side_height+thickness,width=z_slide_width,thickness=thickness);
 
-      translate([0,0,-190]) { // Max (with 300 mm rail) is 300-45*2-20=190
+      translate([0,0,-80]) { // Max (with 300 mm rail) is 300-45*2-20=190
         frame_tool(z=cnc_rail_dimensions[2],y_side_height=y_side_height+thickness,width=z_slide_width,thickness=thickness,highest_tool_holder_position=cnc_rail_dimensions[2]/2-45-16,highest_tool_holder_diameter=80,highest_tool_holder_diameter=80,tool_center_distance=z_slide_width/2-thickness,draw_laser=true,draw_router=true);
       }
     }
