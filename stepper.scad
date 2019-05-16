@@ -23,7 +23,6 @@ module nema23(length=78,width=56.4,axis_diameter=6.35,axis_length=20.6,mount_hol
         translate([-1,-1,-1]) cube([mount_hole_edge_distance*2+1,mount_hole_edge_distance+1,length-mount_hole_depth+1]);
       }
 
-
       translate([mount_hole_distance+mount_hole_edge_distance*2,0,0]) rotate([0,0,90]) union() {
         translate([mount_hole_edge_distance,mount_hole_edge_distance,-1]) cylinder(r=mount_hole_edge_distance,h=length-mount_hole_depth+1,$fn=32);
         translate([-1,-1,-1]) cube([mount_hole_edge_distance+1,mount_hole_edge_distance*2+1,length-mount_hole_depth+1]);
