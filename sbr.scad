@@ -226,7 +226,7 @@ module bf12() {
 }
 
 module axis_nut(with_holes=true) {
-  difference() {
+  color(dark_color) difference() {
     union() {
       translate([0,0,10]) cylinder(r=28/2,h=32,$fn=24);
       intersection() {

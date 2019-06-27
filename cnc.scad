@@ -105,7 +105,7 @@ module frame_y(y=700,z=300,y_side_height=420,width=200,thickness=5,thickness_sid
     // Right side
     color(aluminum_color) {
       translate([40,-side_thickness,0]) profile_o(width=40,height=60,thickness=thickness,length=y_side_height);
-      //translate([40,-side_thickness,0]) cube([(width-80)/2,thickness_side_plate,y_side_height]);
+      translate([40,-side_thickness,0]) cube([(width-80)/2,thickness_side_plate,y_side_height]);
       translate([0,-side_thickness+thickness_side_plate,0]) {
         difference() {
           profile_o(width=40,height=60,thickness=thickness,length=width);
