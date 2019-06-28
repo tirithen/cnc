@@ -1,14 +1,20 @@
 include <sbr.scad>
 include <profiles.scad>
 include <joints.scad>
+include <mount_sheet.scad>
+include <router.scad>
 
 rail_length_x = 1100;
 rail_length_y = 700;
 rail_length_z = 300;
 
-offset_x = 0; //rail_length_x - base_length;
-offset_y = 300; //rail_length_y-45*2;
-offset_z = rail_length_z-45*2;
+base_length=200;
+base_height=50;
+side_width=150;
+side_height=455;
+side_angle=11;
+side_offset=60;
+sbr16uu_offset=45;
 
 profile_thickness = 3;
 profile_l_width = 60;
@@ -16,14 +22,6 @@ profile_square_small_width = 40;
 profile_square_large_width = 60;
 plate_thickness = 15;
 plate_stainless_thickness = 2;
-
-base_length=200;
-base_height=50;
-side_width=150;
-side_height=400;
-side_angle=12;
-side_offset=45;
-sbr16uu_offset=45;
 
 frame_width=rail_length_y+sbr16uu_offset*2+plate_thickness*2+profile_thickness*2;
 side_bottom=20-base_height/2;
@@ -35,6 +33,10 @@ left_block_y=frame_width-sbr16uu_offset*2-plate_thickness*2;
 beam_width=frame_width+plate_thickness*2;
 beam_left=-sbr16uu_offset-plate_thickness*2;
 beam_height=profile_square_small_width+profile_l_width*2;
+
+offset_x = 200; //rail_length_x - base_length;
+offset_y = 200; //rail_length_y-45*2-25-profile_thickness*2;
+offset_z = 0; //rail_length_z-45*2;
 
 aluminum_color=[0.913,0.921,0.925];
 steel_color=[0.560,0.570,0.580];
@@ -83,6 +85,8 @@ module frame_x() {
 
     translate([rail_length_x,profile_thickness,profile_thickness]) rotate([0,0,90]) profile_square_small(length=rail_length_y);
     translate([rail_length_x+profile_square_small_width,profile_thickness,profile_thickness]) rotate([0,0,90]) profile_square_small(length=rail_length_y);
+
+    translate([profile_square_small_width*2,profile_thickness,profile_thickness]) rotate([0,0,90]) profile_square_small(length=rail_length_y);
     translate([profile_square_small_width,profile_thickness,profile_thickness]) rotate([0,0,90]) profile_square_small(length=rail_length_y);
     translate([0,profile_thickness,profile_thickness]) rotate([0,0,90]) profile_square_small(length=rail_length_y);
     translate([-profile_square_small_width,profile_thickness,profile_thickness]) rotate([0,0,90]) profile_square_small(length=rail_length_y);
@@ -162,7 +166,8 @@ module frame_z() {
   offset_z_plate = 5;
   offset_y_separation = 25;
 
-  translate([beam_left+profile_square_small_width,profile_thickness,side_bottom+side_height-profile_square_small_width*4]) {
+  //translate([beam_left+profile_square_small_width,profile_thickness,side_bottom+side_height-profile_square_small_width*4]) {
+  translate([-side_offset+10,profile_thickness,side_bottom+side_height-profile_square_small_width*4]) {
     // Rail sliders
     translate([13.3,0,profile_square_small_width*4-20]) rotate([90,0,90]) sbr16uu();
     translate([13.3,profile_thickness*2+45+offset_y_separation,profile_square_small_width*4-20]) rotate([90,0,90]) sbr16uu();
@@ -221,7 +226,8 @@ module frame_z() {
 module frame_tool() {
   offset_y_separation = 25;
 
-  translate([beam_left+profile_square_small_width+13.5+45+3,profile_thickness+8,side_bottom+side_height-profile_square_small_width*4+40]) {
+  //translate([beam_left+profile_square_small_width+13.5+45+3,profile_thickness+8,side_bottom+side_height-profile_square_small_width*4+40]) {
+  translate([-side_offset+sbr16uu_offset+26.5,profile_thickness+8,side_bottom+side_height-profile_square_small_width*4+40]) {
     translate([0,0,0]) rotate([0,90,0]) sbr16uu();
     translate([0,0,45]) rotate([0,90,0]) sbr16uu();
     translate([0,profile_l_width*2+offset_y_separation-40,0]) rotate([0,90,0]) sbr16uu();
@@ -237,10 +243,17 @@ module frame_tool() {
     }
 
     translate([45,-27.5,45+30]) rotate([0,90,0]) profile_flat(width=160,length=320, thickness=plate_thickness);
+
+    // Tool
+    translate([45+plate_thickness,0,-80]) {
+      translate([0,-27.5+(160-149)/2,0]) rotate([0,90,0]) router_mount();
+      translate([4+12+80/2,-27.5+160/2,-130]) rotate([0,0,0]) router();
+    }
   }
 }
 
 frame_x();
+translate([profile_square_small_width*2+10,profile_thickness,profile_thickness]) mount_sheet(length=rail_length_x-profile_square_small_width*3,width=rail_length_y);
 translate([offset_x,0,0]) {
   frame_y();
   translate([0,offset_y,0]) {
